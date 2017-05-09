@@ -1,25 +1,75 @@
 # How to enable Application Insights Profiler on Azure Compute resources
 
-If you have an application installed in an Azure Compute resource (e.g.: a simple VM)
-and you'd like to start using Application Insights Profiler on it, this will guide you.
+This walkthrough demonstrates how to enable Application Insights Profiler on applications hosted by Azure Compute resources. The examples include Virtual Machine and Virtual Machine Scale Sets.
 
 
-## What you'll need:
+## Prerequisites
 
-* The current deployment template for the Azure Compute resource where Application Insights Profiler will be installed.
+* Download the deployment template that installs the Profiler agents on the VMs.
+
+    [WindowsVirtualMachine.json](https://wadexample.blob.core.windows.net/wadexample/WindowsVirtualMachine.json) | [WindowsVirtualMachineScaleSet.json](https://wadexample.blob.core.windows.net/wadexample/WindowsVirtualMachineScaleSet.json)
 * An Application Insights instance enabled for profiling. Check https://docs.microsoft.com/en-us/azure/application-insights/app-insights-profiler#enable-the-profiler to see how to do that.
 * .NET framework >= 4.6.1 installed in the target Azure Compute resource.
 
 
-## How to do it:
+## Enable the Profiler on Azure Compute resources
 
-* Locate the Windows Azure Diagnostics (WAD) resource declaration in your deployment template.
+### Create Resource Group in your Azure subscription
+Open Create a resource group in your Azure subscription. Below is an example for doing so in using PowerShell script:
+
+```
+New-AzureRmResourceGroup -Name "Replace_With_Resource_Group_Name" -Location "Replace_With_Resource_Group_Location"
+```
+
+### Create an Application Insights resource in the Resource group
+
+![Create Application Insights][Create-AppInsights]
+
+### Apply Application Insights Instrumentation Key in the Azure Resource Manager template
+If you haven't downloaded the template yet, download the template from below. [WindowsVirtualMachine.json](https://wadexample.blob.core.windows.net/wadexample/WindowsVirtualMachine.json)
+
+![Find AI Key][Find-AI-Key]
+
+![Replace Template Value][Replace-TemplateValue]
+
+### Deploy the template
+* Create a secure string to save the password
+```
+$password = ConvertTo-SecureString -String "Replace_With_Your_Password" -AsPlainText -Force
+```
+
+* Deploy ARM template
+Change directory in PowerShell console to the folder that contains your ARM template. Run the following command to deploy the template
+
+```
+New-AzureRmResourceGroupDeployment -ResourceGroupName AI-ComputeWebApp -TemplateFile .\WindowsVirtualMachine.json -adminUsername "Replcae_With_your_user_name" -adminPassword $password -dnsNameForPublicIP "Replace_WIth_your_DNS_Name" -Verbose
+```
+
+After the script executes successfully, you should find a VM named *MyWindowsVM* in your resource group.
+
+Make sure **Web Deploy** is enabled on your VM so your can publish your web application from Visual Studio.
+
+### Publish the project to Azure VM
+There are several ways to publish an application to an Azure VM. One way is to do so in Visual Studio 2017.
+Right click on the project, select 'Publish...'. Select Azure Virtual Machine as the publish target and follow the steps to finish the publish process.
+
+![Publish-FromVS][Publish-AzureVM]
+
+Run some load test against your application. you should be able to see results in the Application Insights instance portal webpage.
+Check https://docs.microsoft.com/en-us/azure/application-insights/app-insights-profiler#viewing-profiler-data for more details.
+
+
+
+
+## What to add if you have an existing VM template
+
+1. Locate the Windows Azure Diagnostics (WAD) resource declaration in your deployment template.
   * Create one if you don't have it yet (check how it's done in the full example).
   * You can update the template from the Azure Resource website (https://resources.azure.com).
-* Modify publisher from "Microsoft.Azure.Diagnostics" to "AIP.Diagnostics.Test".
-* Use typeHandlerVersion as "0.0".
-* Make sure to have autoUpgradeMinorVersion set to true.
-* Add the new ApplicationInsightsProfiler sink instance in WadCfg settings object, following the example below.
+2. Modify publisher from "Microsoft.Azure.Diagnostics" to "AIP.Diagnostics.Test".
+3. Use typeHandlerVersion as "0.0".
+4. Make sure to have autoUpgradeMinorVersion set to true.
+5. Add the new ApplicationInsightsProfiler sink instance in WadCfg settings object, following the example below.
 
 ```
 "resources": [
@@ -55,12 +105,8 @@ and you'd like to start using Application Insights Profiler on it, this will gui
 ]
 ```
 
-
-## What to expect:
-
-After deploying a WAD resource definition containing the ApplicationInsightsProfiler sink,
-you should be able to see results in the Application Insights instance portal webpage.
-Check https://docs.microsoft.com/en-us/azure/application-insights/app-insights-profiler#viewing-profiler-data for more on that.
+## Working with Virtual Machine Scale Set
+Download the [WindowsVirtualMachineScaleSet.json](https://wadexample.blob.core.windows.net/wadexample/WindowsVirtualMachineScaleSet.json) template to see how to enable the Profiler. The idea is similar to Virtual Machines. You have to make sure each instance in the Scale Set has access to Internet, so the Profiler Agent can send the collected samples to Application Insights to be analyzed and displayed.
 
 
 ## Troubleshooting:
@@ -68,7 +114,7 @@ Check https://docs.microsoft.com/en-us/azure/application-insights/app-insights-p
 https://docs.microsoft.com/en-us/azure/application-insights/app-insights-profiler#a-idtroubleshootingatroubleshooting
 
 
-## Full Example
-[WindowsVirtualMachine.json](https://wadexample.blob.core.windows.net/wadexample/WindowsVirtualMachine.json)
-
-[WindowsVirtualMachineScaleSet.json](https://wadexample.blob.core.windows.net/wadexample/WindowsVirtualMachineScaleSet.json)
+[Create-AppInsights]:./media/EnableProfilerForCompute/CreateAI.png
+[Find-AI-Key]: ./media/EnableProfilerForCompute/CopyAIKey.png
+[Replace-TemplateValue]:./media/EnableProfilerForCompute/CopyAIKeyToTemplate.png
+[Publish-AzureVM]:./media/EnableProfilerForCompute/PublishToVM.png
