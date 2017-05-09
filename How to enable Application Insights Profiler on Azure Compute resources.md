@@ -47,7 +47,7 @@ New-AzureRmResourceGroupDeployment -ResourceGroupName AI-ComputeWebApp -Template
 
 After the script executes successfully, you should find a VM named *MyWindowsVM* in your resource group.
 
-Make sure **Web Deploy** is enabled on your VM so your can publish your web application from Visual Studio.
+Make sure **Web Deploy** is enabled on your VM so your can publish your web application from Visual Studio. 
 
 ### Publish the project to Azure VM
 There are several ways to publish an application to an Azure VM. One way is to do so in Visual Studio 2017.
