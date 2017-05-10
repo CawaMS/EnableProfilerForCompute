@@ -95,7 +95,7 @@ Browse to the Application Insights resource you created earlier. Go to the Avail
 
 ## View your performance data
 
-Now go to the Performance blade in your AI resource and view how your application was performing when it's under load.
+Wait for a 10-15 minutes for the Profiler to collect and analyze the data. Then go to the Performance blade in your AI resource and view how your application was performing when it's under load.
 
 ![View Performance][View-AIPerformance]
 
