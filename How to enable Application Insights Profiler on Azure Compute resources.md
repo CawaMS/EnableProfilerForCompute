@@ -20,6 +20,17 @@ The Diagnostics Agent component is what we need to install on the Azure Compute 
 
 
 ## Enable the Profiler on Azure Compute resources
+These steps will be explained in this section:
+* Create Resource Group in your Azure subscription
+* Create an Application Insights resource in the Resource group
+* Apply Application Insights Instrumentation Key in the Azure Resource Manager template
+* Create Azure VM to host the web application
+* Configure Web Deploy on the VM
+* Install Azure Application Insights SDK to your project
+* Publish the project to Azure VM
+* Enable the Profiler on Application Insight
+* Add an Availability Test to your application
+* View your performance data
 
 ### Create Resource Group in your Azure subscription
 Create a resource group in your Azure subscription. Below is an example for doing so in using PowerShell script:
@@ -39,7 +50,7 @@ If you haven't downloaded the template yet, download the template from below. [W
 
 ![Replace Template Value][Replace-TemplateValue]
 
-### Deploy the template
+### Create Azure VM to host the web application
 * Create a secure string to save the password
 ```
 $password = ConvertTo-SecureString -String "Replace_With_Your_Password" -AsPlainText -Force
@@ -81,19 +92,19 @@ Right click on the project, select 'Publish...'. Select Azure Virtual Machine as
 Run some load test against your application. you should be able to see results in the Application Insights instance portal webpage.
 Check https://docs.microsoft.com/en-us/azure/application-insights/app-insights-profiler#viewing-profiler-data for more details.
 
-## Enable the Profiler
+### Enable the Profiler on Application Insight
 Go to your Application Insights Performance blade. Click on the Configure icon and Enable the Profiler
 
 ![Enable Profiler step 1][Enable-Profiler1]
 
 ![Enable Profiler step 2][Enable-Profiler2]
 
-## Add an Availability Test to your application
+### Add an Availability Test to your application
 Browse to the Application Insights resource you created earlier. Go to the Availability blade and add a performance test that sends web requests to your application URL. This way we can collect some sample data to be displayed in the Application Insights Profiler
 
 ![Add Performance Test][Add-Test]
 
-## View your performance data
+### View your performance data
 
 Wait for a 10-15 minutes for the Profiler to collect and analyze the data. Then go to the Performance blade in your AI resource and view how your application was performing when it's under load.
 
