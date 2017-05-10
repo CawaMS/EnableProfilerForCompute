@@ -2,6 +2,16 @@
 
 This walkthrough demonstrates how to enable Application Insights Profiler on an ASP.NET applications hosted by Azure Compute resources. The examples include Virtual Machine and Virtual Machine Scale Sets.
 
+The following will be presented in the walkthrough:
+* Overview
+* Prerequisites for the Walkthrough
+* Enable the Profiler on Azure Compute resources
+* What to Add If You Have an Existing VM Template
+* Working with Virtual Machine Scale Set
+* Troubleshooting
+* Feedback
+
+
 ## Overview
 
 The diagram below illustrates how the Profiler works for Azure Compute resources. It uses Azure Virtual Machine as an example.
@@ -10,9 +20,9 @@ The diagram below illustrates how the Profiler works for Azure Compute resources
 
 The Diagnostics Agent component is what we need to install on the Azure Compute resources so Application Insights Profiler can collect necessary information to process and display on Azure portal. The rest of the walkthrough intends to provide guidance for how to install and configure the diagnostics agent to enable the Application Insights Profiler.
 
-## Prerequisites
+## Prerequisites for the Walkthrough
 
-* Download the deployment template that installs the Profiler agents on the VMs.
+* Download the deployment template that installs the Profiler agents on the VMs or Scale Sets.
 
     [WindowsVirtualMachine.json](https://wadexample.blob.core.windows.net/wadexample/WindowsVirtualMachine.json) | [WindowsVirtualMachineScaleSet.json](https://wadexample.blob.core.windows.net/wadexample/WindowsVirtualMachineScaleSet.json)
 * An Application Insights instance enabled for profiling. Check https://docs.microsoft.com/en-us/azure/application-insights/app-insights-profiler#enable-the-profiler to see how to do that.
@@ -115,7 +125,7 @@ Clicking on the icon under Examples with open the Trace View blade.
 ![Trace View][TraceView]
 
 
-## What to add if you have an existing VM template
+## What to Add If You Have an Existing VM Template
 
 1. Locate the Windows Azure Diagnostics (WAD) resource declaration in your deployment template.
   * Create one if you don't have it yet (check how it's done in the full example).
@@ -163,7 +173,7 @@ Clicking on the icon under Examples with open the Trace View blade.
 Download the [WindowsVirtualMachineScaleSet.json](https://wadexample.blob.core.windows.net/wadexample/WindowsVirtualMachineScaleSet.json) template to see how to enable the Profiler. You have to make sure each instance in the Scale Set has access to Internet, so the Profiler Agent can send the collected samples to Application Insights to be analyzed and displayed.
 
 
-## Troubleshooting:
+## Troubleshooting
 
 https://docs.microsoft.com/en-us/azure/application-insights/app-insights-profiler#a-idtroubleshootingatroubleshooting
 
