@@ -22,7 +22,7 @@ The Diagnostics Agent component is what we need to install on the Azure Compute 
 ## Enable the Profiler on Azure Compute resources
 
 ### Create Resource Group in your Azure subscription
-Open Create a resource group in your Azure subscription. Below is an example for doing so in using PowerShell script:
+Create a resource group in your Azure subscription. Below is an example for doing so in using PowerShell script:
 
 ```
 New-AzureRmResourceGroup -Name "Replace_With_Resource_Group_Name" -Location "Replace_With_Resource_Group_Location"
