@@ -50,7 +50,7 @@ $password = ConvertTo-SecureString -String "Replace_With_Your_Password" -AsPlain
 Change directory in PowerShell console to the folder that contains your ARM template. Run the following command to deploy the template
 
 ```
-New-AzureRmResourceGroupDeployment -ResourceGroupName AI-ComputeWebApp -TemplateFile .\WindowsVirtualMachine.json -adminUsername "Replcae_With_your_user_name" -adminPassword $password -dnsNameForPublicIP "Replace_WIth_your_DNS_Name" -Verbose
+New-AzureRmResourceGroupDeployment -ResourceGroupName "Replace_With_Resource_Group_Name" -TemplateFile .\WindowsVirtualMachine.json -adminUsername "Replace_With_your_user_name" -adminPassword $password -dnsNameForPublicIP "Replace_WIth_your_DNS_Name" -Verbose
 ```
 
 After the script executes successfully, you should find a VM named *MyWindowsVM* in your resource group.
@@ -60,6 +60,10 @@ Make sure **Web Deploy** is enabled on your VM so your can publish your web appl
 Here is a quick way to install Web Deploy on a VM manually via WebPI:[Installing and Configuring Web Deploy on IIS 8.0 or Later](https://docs.microsoft.com/en-us/iis/install/installing-publishing-technologies/installing-and-configuring-web-deploy-on-iis-80-or-later)
 Here is an example for how to automate installing Web Deploy using Azure Resource Manager template:
 [Create, configure and deploy Web Application to an Azure VM](https://azure.microsoft.com/en-us/resources/templates/201-web-app-vm-dsc/)
+
+If you are deploying an ASP.NET MVC application, you will need to go to Server Manager, **Add Roles and Features | Web Server (IIS) | Web Server | Application Development** and enable ASP.NET 4.5 on your server.
+![Add ASP.NET][Enable-ASPNET]
+
 
 ### Publish the project to Azure VM
 There are several ways to publish an application to an Azure VM. One way is to do so in Visual Studio 2017.
@@ -130,3 +134,4 @@ https://docs.microsoft.com/en-us/azure/application-insights/app-insights-profile
 [Find-AI-Key]: ./media/EnableProfilerForCompute/CopyAIKey.png
 [Replace-TemplateValue]:./media/EnableProfilerForCompute/CopyAIKeyToTemplate.png
 [Publish-AzureVM]:./media/EnableProfilerForCompute/PublishToVM.png
+[Enable-ASPNET]:./media/EnableProfilerForCompute/AddASPNET45.png
