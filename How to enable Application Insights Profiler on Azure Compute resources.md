@@ -46,6 +46,7 @@ $password = ConvertTo-SecureString -String "Replace_With_Your_Password" -AsPlain
 ```
 
 * Deploy ARM template
+
 Change directory in PowerShell console to the folder that contains your ARM template. Run the following command to deploy the template
 
 ```
