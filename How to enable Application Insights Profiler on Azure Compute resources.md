@@ -74,6 +74,10 @@ Right click on the project, select 'Publish...'. Select Azure Virtual Machine as
 Run some load test against your application. you should be able to see results in the Application Insights instance portal webpage.
 Check https://docs.microsoft.com/en-us/azure/application-insights/app-insights-profiler#viewing-profiler-data for more details.
 
+## Add a Performance Test to your application
+Browse to the Application Insights resource you created earlier. Go to the Performance Test blade and add a performance test that sends web requests to your application URL.
+
+![Add Performance Test][Add-PerfTest]
 
 
 
@@ -135,3 +139,4 @@ https://docs.microsoft.com/en-us/azure/application-insights/app-insights-profile
 [Replace-TemplateValue]:./media/EnableProfilerForCompute/CopyAIKeyToTemplate.png
 [Publish-AzureVM]:./media/EnableProfilerForCompute/PublishToVM.png
 [Enable-ASPNET]:./media/EnableProfilerForCompute/AddASPNET45.png
+[Add-PerfTest]:./media/EnableProfilerForCompute/AddPerfTest.png
