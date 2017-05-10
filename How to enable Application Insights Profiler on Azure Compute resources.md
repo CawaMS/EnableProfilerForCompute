@@ -2,6 +2,13 @@
 
 This walkthrough demonstrates how to enable Application Insights Profiler on applications hosted by Azure Compute resources. The examples include Virtual Machine and Virtual Machine Scale Sets.
 
+##overview
+
+The diagram below illustrates how the Profiler works for Azure Compute resources. It uses Azure Virtual Machine as an example.
+
+![Overview][Overview]
+
+The Diagnostics Agent component is what we need to install on the Azure Compute resources so Application Insights Profiler can collect necessary information to process and display on Azure portal. The rest of the walkthrough intends to provide guidance for how to install and configure the diagnostics agent to enable the Application Insights Profiler.
 
 ## Prerequisites
 
@@ -47,7 +54,11 @@ New-AzureRmResourceGroupDeployment -ResourceGroupName AI-ComputeWebApp -Template
 
 After the script executes successfully, you should find a VM named *MyWindowsVM* in your resource group.
 
-Make sure **Web Deploy** is enabled on your VM so your can publish your web application from Visual Studio. 
+### Configure Web Deploy on the VM
+Make sure **Web Deploy** is enabled on your VM so your can publish your web application from Visual Studio.
+Here is a quick way to install Web Deploy on a VM manually via WebPI:[Installing and Configuring Web Deploy on IIS 8.0 or Later](https://docs.microsoft.com/en-us/iis/install/installing-publishing-technologies/installing-and-configuring-web-deploy-on-iis-80-or-later)
+Here is an example for how to automate installing Web Deploy using Azure Resource Manager template:
+[Create, configure and deploy Web Application to an Azure VM](https://azure.microsoft.com/en-us/resources/templates/201-web-app-vm-dsc/)
 
 ### Publish the project to Azure VM
 There are several ways to publish an application to an Azure VM. One way is to do so in Visual Studio 2017.
@@ -106,14 +117,14 @@ Check https://docs.microsoft.com/en-us/azure/application-insights/app-insights-p
 ```
 
 ## Working with Virtual Machine Scale Set
-Download the [WindowsVirtualMachineScaleSet.json](https://wadexample.blob.core.windows.net/wadexample/WindowsVirtualMachineScaleSet.json) template to see how to enable the Profiler. The idea is similar to Virtual Machines. You have to make sure each instance in the Scale Set has access to Internet, so the Profiler Agent can send the collected samples to Application Insights to be analyzed and displayed.
+Download the [WindowsVirtualMachineScaleSet.json](https://wadexample.blob.core.windows.net/wadexample/WindowsVirtualMachineScaleSet.json) template to see how to enable the Profiler. You have to make sure each instance in the Scale Set has access to Internet, so the Profiler Agent can send the collected samples to Application Insights to be analyzed and displayed.
 
 
 ## Troubleshooting:
 
 https://docs.microsoft.com/en-us/azure/application-insights/app-insights-profiler#a-idtroubleshootingatroubleshooting
 
-
+[Overview]:./media/EnableProfilerForCompute/overview.png
 [Create-AppInsights]:./media/EnableProfilerForCompute/CreateAI.png
 [Find-AI-Key]: ./media/EnableProfilerForCompute/CopyAIKey.png
 [Replace-TemplateValue]:./media/EnableProfilerForCompute/CopyAIKeyToTemplate.png
