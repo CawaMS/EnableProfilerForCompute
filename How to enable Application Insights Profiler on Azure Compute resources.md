@@ -1,6 +1,6 @@
 # How to enable Application Insights Profiler on Azure Compute resources
 
-This walkthrough demonstrates how to enable Application Insights Profiler on applications hosted by Azure Compute resources. The examples include Virtual Machine and Virtual Machine Scale Sets.
+This walkthrough demonstrates how to enable Application Insights Profiler on an ASP.NET applications hosted by Azure Compute resources. The examples include Virtual Machine and Virtual Machine Scale Sets.
 
 ## Overview
 
@@ -64,6 +64,13 @@ Here is an example for how to automate installing Web Deploy using Azure Resourc
 If you are deploying an ASP.NET MVC application, you will need to go to Server Manager, **Add Roles and Features | Web Server (IIS) | Web Server | Application Development** and enable ASP.NET 4.5 on your server.
 ![Add ASP.NET][Enable-ASPNET]
 
+### Install Azure Application Insights SDK to your project
+* Open your ASP.NET web application in Visual Studio
+* Right click on the project and select **Add | Connected Services**
+* Choose Application Insights
+* Follow the instructions on the page. Select the Application Insights resource you have created earlier
+* Click the **Register** button
+
 
 ### Publish the project to Azure VM
 There are several ways to publish an application to an Azure VM. One way is to do so in Visual Studio 2017.
@@ -74,12 +81,21 @@ Right click on the project, select 'Publish...'. Select Azure Virtual Machine as
 Run some load test against your application. you should be able to see results in the Application Insights instance portal webpage.
 Check https://docs.microsoft.com/en-us/azure/application-insights/app-insights-profiler#viewing-profiler-data for more details.
 
-## Add a Performance Test to your application
-Browse to the Application Insights resource you created earlier. Go to the Performance Test blade and add a performance test that sends web requests to your application URL.
+## Enable the Profiler
+Go to your Application Insights Performance blade. Click on the Configure icon and Enable the Profiler
 
-![Add Performance Test][Add-PerfTest]
+![Enable Profiler step 1][Enable-Profiler1]
 
+![Enable Profiler step 2][Enable-Profiler2]
 
+## Add an Availability Test to your application
+Browse to the Application Insights resource you created earlier. Go to the Availability blade and add a performance test that sends web requests to your application URL. This way we can collect some sample data to be displayed in the Application Insights Profiler
+
+![Add Performance Test][Add-Test]
+
+## View your performance data
+
+Now go to the Performance blade in your AI resource and view how your application was performing when it's under load.
 
 ## What to add if you have an existing VM template
 
@@ -139,4 +155,6 @@ https://docs.microsoft.com/en-us/azure/application-insights/app-insights-profile
 [Replace-TemplateValue]:./media/EnableProfilerForCompute/CopyAIKeyToTemplate.png
 [Publish-AzureVM]:./media/EnableProfilerForCompute/PublishToVM.png
 [Enable-ASPNET]:./media/EnableProfilerForCompute/AddASPNET45.png
-[Add-PerfTest]:./media/EnableProfilerForCompute/AddPerfTest.png
+[Enable-Profiler1]:./media/EnableProfilerForCompute/EnableProfiler1.png
+[Enable-Profiler2]:./media/EnableProfilerForCompute/EnableProfiler2.png
+[Add-Test]:./media/EnableProfilerForCompute/AvailabilityTest.png
