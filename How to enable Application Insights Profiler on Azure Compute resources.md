@@ -2,7 +2,7 @@
 
 This walkthrough demonstrates how to enable Application Insights Profiler on applications hosted by Azure Compute resources. The examples include Virtual Machine and Virtual Machine Scale Sets.
 
-##overview
+## Overview
 
 The diagram below illustrates how the Profiler works for Azure Compute resources. It uses Azure Virtual Machine as an example.
 
