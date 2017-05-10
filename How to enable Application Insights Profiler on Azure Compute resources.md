@@ -156,6 +156,9 @@ Download the [WindowsVirtualMachineScaleSet.json](https://wadexample.blob.core.w
 
 https://docs.microsoft.com/en-us/azure/application-insights/app-insights-profiler#a-idtroubleshootingatroubleshooting
 
+## Feedback
+Email serviceprofilerhelp@microsoft.com for questions or feedback
+
 [Overview]:./media/EnableProfilerForCompute/overview.png
 [Create-AppInsights]:./media/EnableProfilerForCompute/CreateAI.png
 [Find-AI-Key]: ./media/EnableProfilerForCompute/CopyAIKey.png
