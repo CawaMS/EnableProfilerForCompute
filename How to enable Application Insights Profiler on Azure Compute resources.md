@@ -97,6 +97,13 @@ Browse to the Application Insights resource you created earlier. Go to the Avail
 
 Now go to the Performance blade in your AI resource and view how your application was performing when it's under load.
 
+![View Performance][View-AIPerformance]
+
+Clicking on the icon under Examples with open the Trace View blade.
+
+![Trace View][TraceView]
+
+
 ## What to add if you have an existing VM template
 
 1. Locate the Windows Azure Diagnostics (WAD) resource declaration in your deployment template.
@@ -158,3 +165,5 @@ https://docs.microsoft.com/en-us/azure/application-insights/app-insights-profile
 [Enable-Profiler1]:./media/EnableProfilerForCompute/EnableProfiler1.png
 [Enable-Profiler2]:./media/EnableProfilerForCompute/EnableProfiler2.png
 [Add-Test]:./media/EnableProfilerForCompute/AvailabilityTest.png
+[View-AIPerformance]:./media/EnableProfilerForCompute/AIPerformance.png
+[TraceView]:./media/EnableProfilerForCompute/TraceView.png
