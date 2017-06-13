@@ -24,7 +24,7 @@ The Diagnostics Agent component is what we need to install on the Azure Compute 
 
 * Download the deployment template that installs the Profiler agents on the VMs or Scale Sets.
 
-    [WindowsVirtualMachine.json](https://wadexample.blob.core.windows.net/wadexample/WindowsVirtualMachine.json) | [WindowsVirtualMachineScaleSet.json](https://wadexample.blob.core.windows.net/wadexample/WindowsVirtualMachineScaleSet.json)
+    [WindowsVirtualMachine.json](https://github.com/CawaMS/EnableProfilerForCompute/blob/master/WindowsVirtualMachine.json) | [WindowsVirtualMachineScaleSet.json](https://github.com/CawaMS/EnableProfilerForCompute/blob/master/WindowsVirtualMachineScaleSet.json)
 * An Application Insights instance enabled for profiling. Check https://docs.microsoft.com/en-us/azure/application-insights/app-insights-profiler#enable-the-profiler to see how to do that.
 * .NET framework >= 4.6.1 installed in the target Azure Compute resource.
 
@@ -54,7 +54,7 @@ New-AzureRmResourceGroup -Name "Replace_With_Resource_Group_Name" -Location "Rep
 ![Create Application Insights][Create-AppInsights]
 
 ### Apply Application Insights Instrumentation Key in the Azure Resource Manager template
-If you haven't downloaded the template yet, download the template from below. [WindowsVirtualMachine.json](https://wadexample.blob.core.windows.net/wadexample/WindowsVirtualMachine.json)
+If you haven't downloaded the template yet, download the template from below. [WindowsVirtualMachine.json](https://github.com/CawaMS/EnableProfilerForCompute/blob/master/WindowsVirtualMachine.json)
 
 ![Find AI Key][Find-AI-Key]
 
@@ -170,7 +170,7 @@ Clicking on the icon under Examples with open the Trace View blade.
 ```
 
 ## Working with Virtual Machine Scale Set
-Download the [WindowsVirtualMachineScaleSet.json](https://wadexample.blob.core.windows.net/wadexample/WindowsVirtualMachineScaleSet.json) template to see how to enable the Profiler. You have to make sure each instance in the Scale Set has access to Internet, so the Profiler Agent can send the collected samples to Application Insights to be analyzed and displayed.
+Download the [WindowsVirtualMachineScaleSet.json](https://github.com/CawaMS/EnableProfilerForCompute/blob/master/WindowsVirtualMachineScaleSet.json) template to see how to enable the Profiler. You have to make sure each instance in the Scale Set has access to Internet, so the Profiler Agent can send the collected samples to Application Insights to be analyzed and displayed.
 
 
 ## Troubleshooting
