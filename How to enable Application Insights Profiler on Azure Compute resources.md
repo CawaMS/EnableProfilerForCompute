@@ -125,7 +125,7 @@ Clicking on the icon under Examples with open the Trace View blade.
 ![Trace View][TraceView]
 
 
-## What to Add If You Have an Existing VM Template
+## What to Add If You Have an Existing Azure Resource Manager (ARM) Template for VM or VMSS
 
 1. Locate the Windows Azure Diagnostics (WAD) resource declaration in your deployment template.
   * Create one if you don't have it yet (check how it's done in the full example).
