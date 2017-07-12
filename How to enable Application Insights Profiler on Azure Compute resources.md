@@ -1,13 +1,15 @@
 # How to enable Application Insights Profiler on Azure Compute resources
 
-This walkthrough demonstrates how to enable Application Insights Profiler on an ASP.NET applications hosted by Azure Compute resources. The examples include Virtual Machine and Virtual Machine Scale Sets.
+This walkthrough demonstrates how to enable Application Insights Profiler on an ASP.NET applications hosted by Azure Compute resources. The examples include support for Virtual Machine, Virtual Machine Scale Sets, Services Fabric, Cloud Services, and applicatons hosted on on-prem servers.
 
 The following will be presented in the walkthrough:
 * Overview
-* Prerequisites for the Walkthrough
-* Enable the Profiler on Azure Compute resources
-* What to Add If You Have an Existing VM Template
-* Working with Virtual Machine Scale Set
+* Enable the Profiler on Azure Virtual Machines v2
+* Enable the Profiler on Virtual Machine Scale Sets
+* Enable the Profiler on Service Fabric applications
+* Enable the Profiler on Cloud Services applications
+* Enable the Profiler on classic Azure Virtual Machines
+* Enable the Profiler on on-premise servers
 * Troubleshooting
 * Feedback
 
@@ -20,16 +22,16 @@ The diagram below illustrates how the Profiler works for Azure Compute resources
 
 The Diagnostics Agent component is what we need to install on the Azure Compute resources so Application Insights Profiler can collect necessary information to process and display on Azure portal. The rest of the walkthrough intends to provide guidance for how to install and configure the diagnostics agent to enable the Application Insights Profiler.
 
-## Prerequisites for the Walkthrough
+### Prerequisites for the Walkthrough
 
 * Download the deployment template that installs the Profiler agents on the VMs or Scale Sets.
 
-    [WindowsVirtualMachine.json](https://github.com/CawaMS/EnableProfilerForCompute/blob/master/WindowsVirtualMachine.json) | [WindowsVirtualMachineScaleSet.json](https://github.com/CawaMS/EnableProfilerForCompute/blob/master/WindowsVirtualMachineScaleSet.json)
+    [WindowsVirtualMachine.json](./WindowsVirtualMachine.json) | [WindowsVirtualMachineScaleSet.json](./WindowsVirtualMachineScaleSet.json)
 * An Application Insights instance enabled for profiling. Check https://docs.microsoft.com/en-us/azure/application-insights/app-insights-profiler#enable-the-profiler to see how to do that.
 * .NET framework >= 4.6.1 installed in the target Azure Compute resource.
 
 
-## Enable the Profiler on Azure Compute resources
+## Enable the Profiler on Azure Virtual Machines v2
 These steps will be explained in this section:
 * Create Resource Group in your Azure subscription
 * Create an Application Insights resource in the Resource group
@@ -54,7 +56,7 @@ New-AzureRmResourceGroup -Name "Replace_With_Resource_Group_Name" -Location "Rep
 ![Create Application Insights][Create-AppInsights]
 
 ### Apply Application Insights Instrumentation Key in the Azure Resource Manager template
-If you haven't downloaded the template yet, download the template from below. [WindowsVirtualMachine.json](https://github.com/CawaMS/EnableProfilerForCompute/blob/master/WindowsVirtualMachine.json)
+If you haven't downloaded the template yet, download the template from below. [WindowsVirtualMachine.json](./WindowsVirtualMachine.json)
 
 ![Find AI Key][Find-AI-Key]
 
@@ -125,7 +127,7 @@ Clicking on the icon under Examples with open the Trace View blade.
 ![Trace View][TraceView]
 
 
-## What to Add If You Have an Existing Azure Resource Manager (ARM) Template for VM or VMSS
+### What to Add If You Have an Existing Azure Resource Manager (ARM) Template for VM or VMSS
 
 1. Locate the Windows Azure Diagnostics (WAD) resource declaration in your deployment template.
   * Create one if you don't have it yet (check how it's done in the full example).
@@ -169,8 +171,81 @@ Clicking on the icon under Examples with open the Trace View blade.
 ]
 ```
 
-## Working with Virtual Machine Scale Set
-Download the [WindowsVirtualMachineScaleSet.json](https://github.com/CawaMS/EnableProfilerForCompute/blob/master/WindowsVirtualMachineScaleSet.json) template to see how to enable the Profiler. You have to make sure each instance in the Scale Set has access to Internet, so the Profiler Agent can send the collected samples to Application Insights to be analyzed and displayed.
+## Enable the Profiler on Virtual Machine Scale Sets
+Download the [WindowsVirtualMachineScaleSet.json](./WindowsVirtualMachineScaleSet.json) template to see how to enable the Profiler. Apply the same changes in a VM template to VMSS diagnostics extension resource.
+You have to make sure each instance in the Scale Set has access to Internet, so the Profiler Agent can send the collected samples to Application Insights to be analyzed and displayed.
+
+## Enable the Profiler on Service Fabric applications
+Currently enabling the Profiler on Service Fabric applications requires the following:
+1. Provision the Service Fabric Cluster have the WAD extension that installs the Profiler agent
+2. Install Application Insights SDK in the project and configure AI Key
+3. Add application code to instrument telemetry
+
+### Provision the Service Fabric Cluster have the WAD extension that installs the Profiler agent
+A Service Fabric cluster can be secure or non-secure. A typical having the Gateway cluster to be non-secure so it doesn't require certificate to access it, together with one or more secure clusters that hosts the business logics and handles the data. The Profiler can be enabled on both secure and non-secure Service Fabric clusters. The walkthrough uses non-secure cluster as example to explain what changes are required to enable the Profiler. The same changes are applicable to a secure cluster.
+
+Download the [ServiceFabricCluster.json](./ServiceFabricCluster.json). Same as for VMs and VMSS, replace the Application Insights Key with your AI Key:
+
+```
+"publisher": "AIP.Diagnostics.Test",
+                 "settings": {
+                   "WadCfg": {
+                     "SinksConfig": {
+                       "Sink": [
+                         {
+                           "name": "MyApplicationInsightsProfilerSinkVMSS",
+                           "ApplicationInsightsProfiler": "[Application_Insights_Key]"
+                         }
+                       ]
+                     },
+```
+
+Deploy the template using PowerShell script:
+```
+Login-AzureRmAccount
+New-AzureRmResourceGroup -Name [Your_Resource_Group_Name] -Location [Your_Resource_Group_Location] -Verbose -Force
+New-AzureRmResourceGroupDeployment -Name [Choose_An_Arbitrary_Name] -ResourceGroupName [Your_Resource_Group_Name] -TemplateFile [Path_To_Your_Template]
+
+```
+
+### Install Application Insights SDK in the project and configure AI Key
+Install Application Insights SDK from NuGet Package. Make sure you install a stable version 2.3 or later. [Microsoft.ApplicationInsights.Web](https://www.nuget.org/packages/Microsoft.ApplicationInsights.Web/)
+Please refer to [Using Service Fabric with Application Insights](https://github.com/Azure-Samples/service-fabric-dotnet-getting-started/blob/dev/appinsights/ApplicationInsights.md) for configuring the Application Insights in your projects.
+
+### Add application code to instrument telemetry
+For any piece of code you want to instrument, add a using statement around it. For example, the RunAsync method below is doing some work, and the telemetryClient class will instrument the operation once it starts. The event needs a unique name across the application.
+
+```
+protected override async Task RunAsync(CancellationToken cancellationToken)
+       {
+           // TODO: Replace the following sample code with your own logic
+           //       or remove this RunAsync override if it's not needed in your service.
+
+           while (true)
+           {
+               using( var operation = telemetryClient.StartOperation<RequestTelemetry>("[Insert_Event_Unique_Name]"))
+               {
+                   cancellationToken.ThrowIfCancellationRequested();
+
+                   ++this.iterations;
+
+                   ServiceEventSource.Current.ServiceMessage(this.Context, "Working-{0}", this.iterations);
+
+                   await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
+               }
+
+           }
+       }
+```
+
+Deploy your application to the Service Fabric cluster. Wait for the app to run for 10 minutes. For better effect you can run a load test on the app. Go to the Application Insights portal Performance blade, you should see Examples of profiling traces showing up.
+
+## Enable the Profiler on Cloud Services applications
+[TODO]
+## Enable the Profiler on classic Azure Virtual Machines
+[TODO]
+## Enable the Profiler on on-premise servers
+[TODO]
 
 
 ## Troubleshooting
