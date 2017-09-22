@@ -295,7 +295,7 @@ using (var operation = client.StartOperation<RequestTelemetry>("[unique_name_for
     ProcessQueueMessage(msg);
 }
 ```
-10. Redeploy your application onto Azure with these changes
+10. Redeploy your application to Azure with these changes
 
 #### Enable Application Insights Profiler on the app
 1. In the scripts you downloaded from [here](https://github.com/weng5e/WADProfilerEnabling/blob/master/TestNameSpace/CloudService.zip), open **EnableWADExtensionWithProfiler-CloudService.ps1**
@@ -309,9 +309,9 @@ If you are using the Preview version of the Performance blade, click on the Prof
 
 ## Enable the Profiler on classic Azure Virtual Machines
 [TODO]
-## Enable the Profiler on on-premise servers
-[TODO]
 
+## Enable the Profiler on on-premise servers
+We have no plan to officially support Profiler for on-premise servers. If you are interested in experimenting this scenario, you can download scripts from [here](./Profiler_installonprem.zip). We will not be responsible for maintaining these scripts.
 
 ## Troubleshooting
 
