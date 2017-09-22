@@ -1,6 +1,6 @@
 # How to enable Application Insights Profiler on Azure Compute resources
 
-This walkthrough demonstrates how to enable Application Insights Profiler on an ASP.NET applications hosted by Azure Compute resources. The examples include support for Virtual Machine, Virtual Machine Scale Sets, Services Fabric, Cloud Services, and applicatons hosted on on-prem servers.
+This walkthrough demonstrates how to enable Application Insights Profiler on an ASP.NET applications hosted by Azure Compute resources. The examples include support for Virtual Machine, Virtual Machine Scale Sets, Services Fabric, Cloud Services, and applications hosted on on-prem servers.
 
 The following will be presented in the walkthrough:
 * Overview
@@ -241,7 +241,72 @@ protected override async Task RunAsync(CancellationToken cancellationToken)
 Deploy your application to the Service Fabric cluster. Wait for the app to run for 10 minutes. For better effect you can run a load test on the app. Go to the Application Insights portal Performance blade, you should see Examples of profiling traces showing up.
 
 ## Enable the Profiler on Cloud Services applications
-[TODO]
+This walkthrough uses [Visual Studio 2017](https://www.visualstudio.com/)
+
+### Prerequisites
+1. Download the [Contoso University Cloud Services app](https://github.com/CawaMS/ContosoUniversityCS)
+2.  Download scripts from [here](https://github.com/weng5e/WADProfilerEnabling/blob/master/TestNameSpace/CloudService.zip)
+
+### Deploy the app to Azure
+1. Sign-in to [Azure portal](http://portal.azure.com)
+2. Create an Azure Cloud Services resource
+3. Create an Azure SQL database
+4. Create an Azure Storage account
+5. In the **ContosoAdsWeb** project, open **Web.Release.config** file, add the following section. Replace the ContosoAdsContext connection string with your Azure SQL database connection string.
+```
+<connectionStrings>
+    <add name="ContosoAdsContext" connectionString="{connectionstring}"
+    providerName="System.Data.SqlClient" xdt:Transform="SetAttributes" xdt:Locator="Match(name)"/>
+</connectionStrings>
+```
+6. In **ContosoAdsCloudService project**, open **ServiceConfiguration.Cloud.cscfg**, in Role element with name equals ContosoAdsWorker, change the value of **ContosoAdsDbConnectionString** to your Azure SQL database connection string.
+7. In **ServiceConfiguration.Cloud.cscfg**, change the **"Microsoft.WindowsAzure.Plugins.Diagnostics.ConnectionString"** and **"StorageConnectionString"** configuration settings under **ContosoAdsWeb** and **ContosoAdsWorker** to be the value of your Azure Storage connection string.
+8. Publish your application to Azure. You can skip the Diagnostics settings page in the publish wizard for now as Application Insights will be configured later.
+
+### Enable Application Insights on the application
+Application Insights SDK needs to be added to the Web role and Worker role projects.
+
+#### Add Application Insights to Web role projects
+1. Double click on the Connected Services node in the **ContosoAdsWeb** project.
+2. Choose **Monitoring with Application Insights**.
+3. Follow instructions to add an Application Insights resource to your app.
+
+#### Add Application Insights to Worker role projects
+1. Create an Application Insights resource on [Azure portal](http://portal.azure.com).
+2. Right click on **ContosoAdsWorker**
+3. Select **Manage NuGet Packages...**
+4. Search for **Microsoft.ApplicationInsights**
+5. Install the latest version to your worker role projects
+6. Unlike Web role projects, you need to add some application code to instrument requests made by the worker role. Open **WorkerRole.cs** file.
+7. Import the following libraries:
+```
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.ApplicationInsights.DataContracts;
+```
+8. Suppose you are instrumenting some calls in the Run() method. Add the following to the method:
+```
+  TelemetryConfiguration.Active.InstrumentationKey = "[your_application_insights_key]";
+```
+9. Add code to instrument the function you want to collect data for. For example if you want to instrument the ProcessQueueMessage() function, you will add code around the function in a similar way to the following:
+```
+using (var operation = client.StartOperation<RequestTelemetry>("[unique_name_for_your_operation]"))
+{
+    ProcessQueueMessage(msg);
+}
+```
+10. Redeploy your application onto Azure with these changes
+
+#### Enable Application Insights Profiler on the app
+1. In the scripts you downloaded from [here](https://github.com/weng5e/WADProfilerEnabling/blob/master/TestNameSpace/CloudService.zip), open **EnableWADExtensionWithProfiler-CloudService.ps1**
+2. edit the variables $subscriptionId, $serviceName, $storageAccountName, $storageAccountKey. The Storage Account is required by WAD to save collected data. You can use the Storage account you created earlier.
+3. Open the xml file **wad-settings-with-profiler.xml** from the scripts you downloaded. Change the value of **ApplicationInsightsProfiler** element to your Application Insights account's instrumentation key
+4. Run the script **EnableWADExtensionWithProfiler-CloudService.ps1**. This will ask you to sign in to your Azure Account. Wait for a few minutes for the script to finish.
+5. Enable the Profiler by navigating to the Application Insights resource on Azure portal, browse to the performance blade, and click on the purple banner or click on **Configure** widget to go to the Profiler configuration page. Click Enable button.
+If you are using the Preview version of the Performance blade, click on the Profiler widget on the top right hand side of the Performance blade, then click Enable to enable the Profiler
+6. Generate some traffic to your app. You can run a performance and load test to your app.
+7. Navigate to the Performance blade again. You should be able to see the Profiler traces showing up in the Operations table. If you are using the Preview performance blade, you will see a button labelled **Profiler Traces** in the Take Actions section on the bottom left corner of the blade.
+
 ## Enable the Profiler on classic Azure Virtual Machines
 [TODO]
 ## Enable the Profiler on on-premise servers
